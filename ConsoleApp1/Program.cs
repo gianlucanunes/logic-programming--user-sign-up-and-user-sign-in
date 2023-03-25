@@ -118,8 +118,6 @@ _signIn:
 
         goto _beggining;
     }
-
-
 }
 
 // Validating if there is at least 1 registered user inside the list
