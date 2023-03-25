@@ -1,120 +1,130 @@
-﻿/* 
+﻿/*
  * 
- *  |-------------------------------------------|
- *  |            SISTEMA DE CADASTRO            |
- *  |-------------------------------------------|
- * 
- * 
+ *      EN: Logic Programming Exercise: User Sign-up and User Sign-in.
+ *      PT-BR: Exercício de Lógica de Programação: Cadastro e Login de usuário.
+ *      
+ *      Created by / Feito por: Gianluca Nunes
+ *
  */
 
+// Creating the Users list, where the program will store the usernames
+List<string> users = new List<string>();
+// Creating the Passwords list, where the program will store the passwords
+List<string> passwords = new List<string>();
 
-List<string> usuarios = new List<string>();
-List<string> senhas = new List<string>();
+Console.WriteLine("---==--- USER SIGN-UP AND USER SIGN-IN ---==---");
 
-Console.WriteLine("" +
-    "/* \r\n * \r\n *  |---------------------------------------------------|\r\n " +
-                   "*  |            SISTEMA DE LOGIN E CADASTRO            |\r\n " +
-                   "*  |---------------------------------------------------|\r\n * \r\n * \r\n */");
+// Asking the user if he wants to sign-up or sign-in
+_beggining:
+Console.WriteLine("\nHello! Do you want to sign-up [U] or sign-in [I]?");
+string optBeg = Console.ReadLine();
 
-pagInicial:
-Console.WriteLine("\nOlá! Deseja realizar o Login [L] ou o cadastro [C]?");
-string decInicial = Console.ReadLine();
-
-
-if (decInicial == "c" || decInicial == "C")
+// Validating the user choosen option
+if (optBeg != "u" && optBeg != "U" && optBeg != "i" && optBeg != "I") 
 {
-    Console.WriteLine("\n\n--------- CADASTRO ---------\n");
+    Console.WriteLine("\nIncorrect option. Please, try it again.\n");
+    goto _beggining;
+}
 
-cadastro:
-    Console.Write("Por favor, prencha os campos abaixo.\nNovo usuário: ");
-    string usuario = Console.ReadLine();
-    Console.Write("Nova senha: ");
-    string senha = Console.ReadLine();
-    Console.Write("Confirmação da senha: ");
-    string confSenha = Console.ReadLine();
+// Registering a new user in the system
+else if (optBeg == "u" || optBeg == "U")
+{
+    Console.WriteLine("\n-=- SIGN-UP -=-\n");
 
-    if (senha != confSenha)
+_signUp:
+    // Asking the user for the information
+    Console.Write("Please, fill up the form bellow.\nUsername: ");
+    string user = Console.ReadLine();
+    Console.Write("Password: ");
+    string password = Console.ReadLine();
+    Console.Write("Confirm your password: ");
+    string confPass = Console.ReadLine();
+
+    // Validating if the password and the confirm password matches
+    if (password != confPass)
     {
-        Console.WriteLine("\nAs senhas não batem. Tente novamente.");
-        goto cadastro;
+        Console.WriteLine("\nThe passwords does not match. Please, try it again.\n");
+        goto _signUp;
     }
 
-    // --- Analisando se o usuário já existe --- 
-    foreach (string user in usuarios)
+    // Validating if the username already exists inside the list
+    foreach (string item in users)
     {
-        if (usuario == user)
+        if (item == user)
         {
-            Console.WriteLine("\nO nome de usuário fornecido já existe em nosso banco de dados. Por favor, tente novamente.\n");
-            goto cadastro;
+            Console.WriteLine("\nThe username you typed already exists. Please, try it again.\n");
+            goto _signUp;
         }
     }
 
-    // -- Analisando se o usuário não digitou nada
-    if (usuario == "" || senha == "")
+    // Validating if the user left any blank field
+    if (user == "" || password == "")
     {
-        Console.WriteLine("\nNenhum dos campos pode ficar em branco.\n");
-        goto cadastro;
+        Console.WriteLine("\nYou cannot leave any option in blank. Please, try it again.\n");
+        goto _signUp;
     }
 
-    usuarios.Add(usuario);
-    senhas.Add(senha);
+    // If everything is okay, adds the username and its password to the lists
+    users.Add(user);
+    passwords.Add(password);
 
-    Console.WriteLine("\nUsuário cadastrado com sucesso.");
-    goto pagInicial;
-
+    Console.WriteLine("\nUser registered successfully.");
+    goto _beggining;
 }
-else if ((decInicial == "l" || decInicial == "L") && usuarios.Count >= 1)
+
+// Sign-in user
+else if ((optBeg == "i" || optBeg == "I") && users.Count >= 1)
 {
-    Console.WriteLine("\n\n--------- LOGIN ---------\n");
+    Console.WriteLine("\n-=- SIGN-IN -=-\n");
 
-login:
-    string usuarioForn = "";
-    string senhaForn = "";
+_signIn:
+    // Creating 2 strings to store the given username and password in order to compare them later
+    string givenUsername = "";
+    string givenPassword = "";
 
-    Console.Write("Por favor, prencha os campos abaixo.\nUsuário: ");
-    usuarioForn = Console.ReadLine();
-    Console.Write("Senha: ");
-    senhaForn = Console.ReadLine();
+    // Asking the user to fill the form
+    Console.Write("In order to sign-in, fill the form bellow.\nUsername: ");
+    givenUsername = Console.ReadLine();
+    Console.Write("Password: ");
+    givenPassword = Console.ReadLine();
 
-    // --- Análise dos dados de login ---
-    int posUser = usuarios.IndexOf($"{usuarioForn}");
-    int posSenha = posUser;
+    // Creating an int variable to find the position of the username inside the list
+    int userPos = users.IndexOf($"{givenUsername}");
+    int passwordPos = userPos;
 
-
-    // Console.WriteLine($"{posUser} e {posSenha}");
-
-    if (posUser == -1)
+    // If the given username does not exists inside the list, the method IndexOf will return -1. 
+    // We can use this value to validate the username
+    if (userPos == -1)
     {
-        Console.WriteLine("\nAs informações não batem. Tente novamente.\n");
-        goto login;
+        Console.WriteLine("\nIncorrect information. Please, try it again.\n");
+        goto _signIn;
     }
 
-    else if (senhaForn != senhas[posSenha])
+    // If the given username exists inside the list, the program will try to compare the given password with the username's password inside the list.
+    // If they are different, that means the user has filled the form incorrectly.
+    else if (givenPassword != passwords[passwordPos])
     {
-        Console.WriteLine("\nAs informações não batem. Tente novamente.\n");
-        goto login;
+        Console.WriteLine("\nIncorrect information. Please, try it again.\n");
+        goto _signIn;
     }
 
-
-    else if (usuarioForn == usuarios[posUser] && senhaForn == senhas[posSenha])
+    // If the given username and password matches with the username and password stored inside the list, gives access to the System 
+    else if (givenUsername == users[userPos] && givenPassword == passwords[passwordPos])
     {
-        Console.WriteLine("\n\n--------- SISTEMA ---------\n");
-        Console.WriteLine($"\nOlá! Você está logado como {usuarioForn}. Para deslogar, aperte qualquer tecla do seu teclado.");
+        Console.WriteLine("\n\n-=- WELCOME TO THE SYSTEM! -=-\n");
+        Console.WriteLine($"\nHello! You are logged on as {givenUsername}.\nTo disconnect, just press any key on your keyboard.");
 
         Console.ReadKey();
 
-        goto pagInicial;
+        goto _beggining;
     }
 
 
 }
-else if (usuarios.Count == 0)
+
+// Validating if there is at least 1 registered user inside the list
+else if (users.Count == 0)
 {
-    Console.WriteLine("\nNão há nenhum cadastro no sistema. Antes de realizar o Login, deve ser feito o cadastro de ao menos 1 usuário.\n");
-    goto pagInicial;
-}
-else
-{
-    Console.WriteLine("\nPor favor, escolha a opção correta.\n");
-    goto pagInicial;
+    Console.WriteLine("\nThere are 0 registered users. You need to sign-up at least 1 user before trying to sign-in.\n");
+    goto _beggining;
 }
